@@ -1,0 +1,66 @@
+{
+	"name": "obsidian-DERAMMO-SIMPLE",
+	"version": "1.0.0",
+	"description": "DERAMMO-SIMPLE plugin for Obsidian.",
+	"main": "main.js",
+	"types": "main.d.ts",
+	"scripts": {
+		"dev": "node esbuild.config.mjs",
+		"build": "tsc -noEmit -skipLibCheck && node esbuild.config.mjs production",
+		"version": "node version-bump.mjs && git add manifest.json versions.json",
+		"lint": "eslint . --ext .ts",
+		
+		"preinstall": "git submodule update --init --recursive",
+		"gitinit": "git init && git submodule add --force https://github.com/derammo/derobst src/derobst"
+	},
+	"keywords": [],
+	"author": "YOURNAME",
+	"license": "MIT",
+	"devDependencies": {
+		"@codemirror/language": "^6.5.0",
+		"@lezer/common": "^1.0.2",
+		"@types/node": "^16.11.6",
+		"@typescript-eslint/eslint-plugin": "5.29.0",
+		"@typescript-eslint/parser": "5.29.0",
+		"builtin-modules": "3.3.0",
+		"esbuild": "0.17.3",
+		"obsidian": "latest",
+		"typescript": "4.7.4"
+	},
+	"files": [
+		"main.js",
+		"main.js.map",
+		"manifest.json",
+		"versions.json",
+		"styles.css",
+		"LICENSE",
+		"README.md"
+	],
+	"eslintConfig": {
+		"root": true,
+		"parser": "@typescript-eslint/parser",
+		"env": {
+			"node": true
+		},
+		"plugins": [
+			"@typescript-eslint"
+		],
+		"extends": [
+			"eslint:recommended",
+			"plugin:@typescript-eslint/eslint-recommended",
+			"plugin:@typescript-eslint/recommended"
+		],
+		"parserOptions": {
+			"sourceType": "module"
+		},
+		"rules": {
+			"@typescript-eslint/no-unused-vars": [
+				"error",
+				{
+					"argsIgnorePattern": "^_"
+				}
+			],
+			"@typescript-eslint/no-inferrable-types": "off"
+		}
+	}
+}

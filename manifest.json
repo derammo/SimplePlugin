@@ -1,0 +1,11 @@
+{
+	"id": "obsidian-DERAMMO-SIMPLE",
+	"name": "DERAMMO-SIMPLE",
+	"version": "1.0.0",
+	"minAppVersion": "0.15.0",
+	"description": "DERAMMO-SIMPLE plugin for Obsidian.",
+	"author": "YOURNAME",
+	"authorUrl": "https://github.com/YOURNAME",
+	"fundingUrl": "https://paypal.me/YOURNAME",
+	"isDesktopOnly": true
+}
