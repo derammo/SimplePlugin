@@ -2,11 +2,11 @@ import { App, Plugin, PluginSettingTab, Setting } from "obsidian";
 import { PluginServices } from "./PluginServices";
 
 export interface Settings {
-    exampleSetting: boolean;
+    autoHide: boolean;
 }
 
 export const DEFAULT_SETTINGS: Settings = {
-    exampleSetting: true
+    autoHide: true
 };
 
 export class SettingTab extends PluginSettingTab {
@@ -20,12 +20,12 @@ export class SettingTab extends PluginSettingTab {
 		containerEl.createEl('h2', { text: 'Settings for DERAMMO-SIMPLE Plugin' });
 
 		new Setting(containerEl)
-			.setName('Example Setting')
-			.setDesc('An example boolean setting.  If true, then [describe what happens].')
+			.setName('Auto Hide')
+			.setDesc('If true, recognized inline commands will be hidden in preview mode when they are not being edited.')
 			.addToggle(value => value
-				.setValue(this.services.settings.exampleSetting)
+				.setValue(this.services.settings.autoHide)
 				.onChange(async (value) => {
-                    this.services.settings.exampleSetting = value;
+                    this.services.settings.autoHide = value;
                     await this.services.saveSettings();
 				}));
     }

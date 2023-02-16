@@ -1,4 +1,4 @@
-import { CommandDispatcher, CommandViewPlugin } from "derobst/command";
+import { CommandDispatcher, CommandViewPlugin, createCommandRemovalPostProcessor } from "derobst/command";
 import { ObsidianPluginBase } from "derobst/main";
 import { PluginServices } from "main/PluginServices";
 
@@ -16,8 +16,11 @@ export default class ObsidianPlugin extends ObsidianPluginBase<Settings> impleme
 
 		// In preview mode, the appearance of recognized commands is controlled by the view plugin.
 		this.registerViewPlugin(createCommandViewPlugin(this));
-        
-		// TODO: Start up other components of your plugin here.
+
+		// Always hide recognized commands in rendered markdown.
+		this.registerMarkdownPostProcessor(createCommandRemovalPostProcessor(this.commands));
+
+        // TODO: Start up other components of your plugin here.
 
 		this.addSettingTab(new SettingTab(this.app, this, this));
 	}

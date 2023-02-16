@@ -17,6 +17,10 @@ export class FooCommand extends ParsedCommandWithParameters<PluginServices> {
 		// Place a <button> to the left of this inline command.
 		const widget = new FooWidget(context.plugin, this);
 		context.builder.add(this.commandNode.from - 1, this.commandNode.from - 1, Decoration.widget({ widget: widget }));
+
+		// Style the command to dim or hide when not being edited, which we detect in CSS (see styles.css).
+		const cssClass = context.plugin.settings.autoHide ? "auto-hide" : "auto-dim"
+		context.builder.add(this.commandNode.from, this.commandNode.to, Decoration.mark({ class: cssClass }));
 	}
 
 	get regex(): RegExp {
