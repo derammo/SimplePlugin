@@ -1,4 +1,4 @@
-import { Decoration, ParsedCommandWithParameters } from "derobst/command";
+import { Decoration, ParsedCommandWithParameters, SyntaxNodeRef } from "derobst/command";
 import { ViewPluginContext } from "derobst/view";
 import { PluginServices } from "main/PluginServices";
 import { FooWidget } from "./FooWidget";
@@ -9,18 +9,15 @@ export class FooCommand extends ParsedCommandWithParameters<PluginServices> {
 	 */
 	static readonly COMMAND_REGEX = /^\s*!foo(?:\s(.*)|$)/;
 
-	buildWidget(context: ViewPluginContext<PluginServices>): void {
-		if (this.commandNode === undefined) {
-			return;
-		}
-
-		// Place a <button> to the left of this inline command.
-		const widget = new FooWidget(context.plugin, this);
-		context.builder.add(this.commandNode.from - 1, this.commandNode.from - 1, Decoration.widget({ widget: widget }));
+	buildWidget(context: ViewPluginContext<PluginServices>, commandNodeRef: SyntaxNodeRef): void {
+		
+		// console.debug(`creating widget for doc object ${Object.id(context.state.doc)}`);
+		const widget = new FooWidget(context.plugin, context.state, commandNodeRef);
+		context.builder.add(commandNodeRef.from - 1, commandNodeRef.from - 1, Decoration.widget({ widget: widget }));
 
 		// Style the command to dim or hide when not being edited, which we detect in CSS (see styles.css).
 		const cssClass = context.plugin.settings.autoHide ? "auto-hide" : "auto-dim"
-		context.builder.add(this.commandNode.from, this.commandNode.to, Decoration.mark({ class: cssClass }));
+		context.builder.add(commandNodeRef.from, commandNodeRef.to, Decoration.mark({ class: cssClass }));
 	}
 
 	get regex(): RegExp {

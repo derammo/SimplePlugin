@@ -9,6 +9,4 @@ export interface PluginServices extends MinimalCommandHost<PluginServices> {
      * Access to current settings, valid since only shared after onLoad();
      */
     settings: Settings;
-
-    // TODO: Add other functionality to support your components.
 }

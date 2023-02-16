@@ -1,12 +1,21 @@
+import { MarkdownPostProcessorContext } from "obsidian";
+
 import { CommandDispatcher, CommandViewPlugin, createCommandRemovalPostProcessor } from "derobst/command";
 import { ObsidianPluginBase } from "derobst/main";
-import { PluginServices } from "main/PluginServices";
+import { createTextRangeUpdater, TextRangeTracking } from "derobst/view";
 
-import { Settings, DEFAULT_SETTINGS, SettingTab } from "main/Settings";
+import { PluginServices } from "main/PluginServices";
+import { DEFAULT_SETTINGS, Settings, SettingTab } from "main/Settings";
+
 import { FooCommand } from "foo/FooCommand";
+import { FooRenderer } from "./src/foo/FooRenderer";
+
+export const debug = false;
+export const showInlineCommandInRenderView = false;
 
 export default class ObsidianPlugin extends ObsidianPluginBase<Settings> implements PluginServices {
 	commands: CommandDispatcher<PluginServices>;
+	tracking: TextRangeTracking = createTextRangeUpdater(debug);
 
 	async onload() {
 		await this.loadSettings(DEFAULT_SETTINGS);
@@ -14,22 +23,28 @@ export default class ObsidianPlugin extends ObsidianPluginBase<Settings> impleme
 		this.commands = new CommandDispatcher();
 		this.commands.registerCommand(FooCommand)
 
-		// In preview mode, the appearance of recognized commands is controlled by the view plugin.
+		this.registerEditorExtension(this.tracking.createExtensions());
 		this.registerViewPlugin(createCommandViewPlugin(this));
-
-		// Always hide recognized commands in rendered markdown.
-		this.registerMarkdownPostProcessor(createCommandRemovalPostProcessor(this.commands));
-
-        // TODO: Start up other components of your plugin here.
-
+		if (!showInlineCommandInRenderView) {
+			this.registerMarkdownPostProcessor(createCommandRemovalPostProcessor(this.commands));
+		}
+		this.registerMarkdownPostProcessor((_el: HTMLElement, _ctx: MarkdownPostProcessorContext) => {
+			// this is async, but caused by the dispatch we have already seen in the state field
+			// console.debug(`Markdown post processor called with element ${util.inspect(el, { showHidden: true })} and context ${util.inspect(ctx, { showHidden: true })}`);
+			// console.debug(el);
+			// console.debug(util.inspect(ctx.getSectionInfo(el), { showHidden: true }));
+			// console.debug(ctx.getSectionInfo(el));
+		});
+		this.registerMarkdownCodeBlockProcessor("foo", (source: string, el: HTMLElement, ctx: MarkdownPostProcessorContext) => {
+			// console.debug(`Markdown code block processor called with element ${util.inspect(el, { showHidden: true })}, context ${util.inspect(ctx, { showHidden: true })}, and source '${source}'`);
+			ctx.addChild(new FooRenderer(el, this, source));
+		});
 		this.addSettingTab(new SettingTab(this.app, this, this));
 	}
 
 	onunload() {
-		// TODO: Shut down components of your plugin here.
+		// no code
 	}    
-
-    // TODO: Implement the core functionality of your plugin here, to be called via PluginServices.
 }
 
 /**
